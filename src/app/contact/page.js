@@ -60,7 +60,7 @@ export default function ContactPage() {
 
 
                 {/* Map Section */}
-                <section className="px-6 pt-20 bg-gradient-to-br from-[#667085] via-[#5a6078] to-[#4a5068]">
+                <section className="px-6 py-20 ">
                     <div className="max-w-6xl mx-auto">
                         <div className="mb-12 text-center">
                             <h1 className="text-5xl text-black mb-10 md:text-6xl font-bold">
