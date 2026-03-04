@@ -1,6 +1,6 @@
 export default function Community() {
     return (
-        <section className="px-6 pt-20 bg-white">
+        <section className="px-4 md:px-6 pt-20 bg-white">
             <div className="max-w-6xl mx-auto">
                 {/* Header */}
                 <div className="text-center mb-16">

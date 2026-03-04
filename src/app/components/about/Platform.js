@@ -7,7 +7,7 @@ export default function Platform() {
                 <div className="grid md:grid-cols-2 items-center">
                     {/* Left: Features */}
                     <div className="flex flex-col gap-10 ">
-                        <h2 className="text-4xl text-center py-10 md:text-5xl font-bold text-[#667085]">
+                        <h2 className="text-4xl text-center py-5 md:py-10 md:text-5xl font-bold text-[#667085]">
                             Our <span className="font-bold text-black">New Platform</span>
                         </h2>
 

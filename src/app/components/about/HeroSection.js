@@ -20,7 +20,7 @@ export default function HeroSection() {
                 </h1>
 
                 {/* Subtitle */}
-                <p className="text-xl text-gray-700 max-w-3xl mx-auto leading-relaxed">
+                <p className="md:text-xl text-sm text-gray-700 max-w-3xl mx-auto leading-relaxed">
                     Empowering Careers, Connecting Opportunities in Tirupur Since 2018
                 </p>
 
