@@ -5,14 +5,14 @@ export default function HeroSection() {
         <section className="px-6 py-24 max-w-6xl mx-auto">
             <div className="text-center ">
                 {/* Tagline */}
-                <div className='mx-auto w-fit mb-10 p-0.5 bg-[#E4E7EC] rounded-3xl'>
-                    <p className="text-sm px-3  text-center f text-gray-400 tracking-wide">
+                <div className='mx-auto w-fit mb-6 md:mb-10 p-0.5 bg-[#E4E7EC] rounded-3xl'>
+                    <p className="text-sm px-3  text-center f text-black tracking-wide">
                         Connecting Opportunities That Matter
                     </p>
                 </div>
 
                 {/* Main Heading */}
-                <h1 className="text-5xl text-black mb-10 md:text-6xl font-bold">
+                <h1 className="text-4xl text-black mb-6 md:mb-10 md:text-6xl font-bold">
                     About{' '}
                     <span className="text-[#667085] bg-clip-text ">
                         Bhairava Jobs

@@ -2,12 +2,12 @@ import Image from "next/image";
 
 export default function Platform() {
     return (
-        <section className="md:px-6 px-5 py-5 bg-white">
+        <section className="md:px-6 px-5 md:py-5 bg-white">
             <div className="max-w-6xl mx-auto">
                 <div className="grid md:grid-cols-2 items-center">
                     {/* Left: Features */}
-                    <div className="flex flex-col gap-10">
-                        <h2 className="text-4xl py-10 md:text-5xl font-bold text-[#667085]">
+                    <div className="flex flex-col gap-10 ">
+                        <h2 className="text-4xl text-center py-10 md:text-5xl font-bold text-[#667085]">
                             Our <span className="font-bold text-black">New Platform</span>
                         </h2>
 

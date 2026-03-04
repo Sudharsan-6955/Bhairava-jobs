@@ -12,14 +12,14 @@ export default function ContactPage() {
                 <section className="px-6 pt-24 max-w-6xl mx-auto">
                     <div className="text-center">
                         {/* Tagline */}
-                        <div className='mx-auto w-fit mb-10 bg-gray-200 rounded-3xl'>
+                        <div className='mx-auto w-fit mb-6 md:mb-10 bg-gray-200 rounded-3xl'>
                             <p className="text-md px-3 text-center font-medium text-gray-600 tracking-wide">
                                 Connecting Opportunities That Matter
                             </p>
                         </div>
 
                         {/* Main Heading */}
-                        <h1 className="text-5xl text-[#667085] mb-10 md:text-6xl font-bold">
+                        <h1 className="text-5xl text-[#667085] mb-6 md:mb-10  md:text-6xl font-bold">
                             Get in{' '}
                             <span className="text-black">
                                 Touch
@@ -27,7 +27,7 @@ export default function ContactPage() {
                         </h1>
 
                         {/* Subtitle */}
-                        <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed mb-8">
+                        <p className="text-sm md:text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed mb-8">
                             Whether you're looking to discuss about job, post job, or collaborate with us, we're always excited to connect and provide new opportunities.
                         </p>
 

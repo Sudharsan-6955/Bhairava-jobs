@@ -1,6 +1,6 @@
 export default function ContactForm() {
     return (
-        <section className="px-6 py-20 bg-white">
+        <section className="md:px-6 px-3 pt-20 bg-white">
             <div className="max-w-6xl mx-auto">
                 <div className="grid md:grid-cols-2 gap-16 items-center">
                     {/* Left: Ping Us Section */}
@@ -21,7 +21,7 @@ export default function ContactForm() {
                     </div>
 
                     {/* Right: Contact Form */}
-                    <div className="bg-white drop-shadow-xl rounded-2xl p-8 border border-gray-200">
+                    <div className="bg-white drop-shadow-xl rounded-2xl p-4 md:p-8 border border-gray-200">
                         <form className="space-y-6">
                             {/* Full Name and Contact Number - Side by side */}
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

@@ -29,18 +29,18 @@ export default function Journey() {
                         </p>
 
                         {/* Statistics */}
-                        <div className="grid grid-cols-3 gap-6 pt-6">
+                        <div className="grid grid-cols-3 gap-3 md:gap-6 pt-6">
                             <div className="text-center">
-                                <div className="text-3xl md:text-4xl font-bold text-gray-900">1L+</div>
-                                <div className="text-sm text-gray-600 mt-2">Instagram Followers</div>
+                                <div className="text-2xl md:text-4xl font-bold text-gray-900">1L+</div>
+                                <div className="text-xs md:text-sm  text-gray-600 mt-1 md:mt-2">Instagram Followers</div>
                             </div>
                             <div className="text-center">
-                                <div className="text-3xl md:text-4xl font-bold text-gray-900">1000+</div>
-                                <div className="text-sm text-gray-600 mt-2">Jobs Posted</div>
+                                <div className="text-2xl md:text-4xl font-bold text-gray-900">1000+</div>
+                                <div className="text-xs md:text-sm text-gray-600 mt-1 md:mt-2">Jobs Posted</div>
                             </div>
                             <div className="text-center">
-                                <div className="text-3xl md:text-4xl font-bold text-gray-900">500+</div>
-                                <div className="text-sm text-gray-600 mt-2">Companies</div>
+                                <div className="text-2xl md:text-4xl font-bold text-gray-900">500+</div>
+                                <div className="text-xs md:text-sm text-gray-600 mt-1 md:mt-2">Companies</div>
                             </div>
                         </div>
                     </div>
