@@ -37,7 +37,7 @@ export default function Platform() {
                             <div className="">
                                  <div className="w-12 shadow-[#00000005]  drop-shadow-[#0000000F] h-12 border-[2px] rounded-lg bg-white  flex items-center justify-center">
                                     <Image
-                                        src="/images/about/bxs_notification.svg"
+                                        src="/images/About/bxs_notification.svg"
                                         alt="Search"
                                         width={26}
                                         height={26}
@@ -58,7 +58,7 @@ export default function Platform() {
                             <div className="shrink-0">
                                 <div className="w-12 shadow-[#00000005]  drop-shadow-[#0000000F] h-12 border-[2px] rounded-lg bg-white  flex items-center justify-center">
                                     <Image
-                                        src="/images/about/community.svg"
+                                        src="/images/About/community.svg"
                                         alt="Search"
                                         width={26}
                                         height={26}
