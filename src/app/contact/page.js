@@ -60,7 +60,7 @@ export default function ContactPage() {
 
 
                 {/* Map Section */}
-                <section className="px-6 py-20 ">
+                <section className="px-6 py-16 ">
                     <div className="max-w-6xl mx-auto">
                         <div className="mb-12 text-center">
                             <h1 className="text-5xl text-black mb-10 md:text-6xl font-bold">

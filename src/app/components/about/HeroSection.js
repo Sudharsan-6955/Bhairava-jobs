@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 export default function HeroSection() {
     return (
-        <section className="px-6 py-24 max-w-6xl mx-auto">
+        <section className="px-6 py-16 max-w-6xl mx-auto">
             <div className="text-center ">
                 {/* Tagline */}
                 <div className='mx-auto w-fit mb-6 md:mb-10 p-0.5 bg-[#E4E7EC] rounded-3xl'>
