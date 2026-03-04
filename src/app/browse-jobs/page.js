@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { Suspense, useState, useEffect, useRef, useMemo } from 'react';
 import Image from 'next/image';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
 import { formatRelativeTime } from '../../utils/formatDate';
 
-export default function BrowseJobsPage() {
+function BrowseJobsContent() {
 	const searchParams = useSearchParams();
 	const router = useRouter();
 	const [jobs, setJobs] = useState([]);
@@ -574,5 +574,42 @@ export default function BrowseJobsPage() {
 
 			<Footer />
 		</div>
+	);
+}
+
+// Loading fallback component
+function BrowseJobsLoading() {
+	return (
+		<div className="bg-white min-h-screen">
+			<Navbar />
+			<div className="bg-[#E8F4F8] py-12">
+				<div className="max-w-7xl mx-auto px-4 md:px-8">
+					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+						{Array.from({ length: 6 }).map((_, i) => (
+							<div key={i} className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-100 animate-pulse">
+								<div className="p-3">
+									<div className="aspect-3/4 w-full bg-gray-300 rounded-md"></div>
+								</div>
+								<div className="p-5">
+									<div className="h-4 bg-gray-300 rounded mb-2 w-3/4"></div>
+									<div className="h-3 bg-gray-300 rounded mb-2 w-full"></div>
+									<div className="h-3 bg-gray-300 rounded mb-4 w-5/6"></div>
+								</div>
+							</div>
+						))}
+					</div>
+				</div>
+			</div>
+			<Footer />
+		</div>
+	);
+}
+
+// Main page component with Suspense
+export default function BrowseJobsPage() {
+	return (
+		<Suspense fallback={<BrowseJobsLoading />}>
+			<BrowseJobsContent />
+		</Suspense>
 	);
 }
