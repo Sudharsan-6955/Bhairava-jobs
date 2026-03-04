@@ -1,41 +1,98 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# dependencies
+# ========== DEPENDENCIES ==========
 /node_modules
+npm-shrinkwrap.json
 /.pnp
 .pnp.*
+
+# Yarn
 .yarn/*
 !.yarn/patches
 !.yarn/plugins
 !.yarn/releases
 !.yarn/versions
 
-# testing
-/coverage
+# pnpm
+.pnpm-store/
 
-# next.js
+# ========== TESTING & COVERAGE ==========
+/coverage
+.nyc_output/
+.pytest_cache/
+
+# ========== NEXT.JS BUILD OUTPUT ==========
 /.next/
 /out/
+/build/
+dist/
 
-# production
-/build
+# ========== ENVIRONMENT VARIABLES ==========
+.env
+.env.local
+.env.*.local
+.env*.local
 
-# misc
-.DS_Store
-*.pem
-
-# debug
+# ========== LOGS ==========
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-.pnpm-debug.log*
+pnpm-debug.log*
+lerna-debug.log*
+*.log
 
-# env files (can opt-in for committing if needed)
-.env*
+# ========== CACHE FILES ==========
+.eslintcache
+.stylelintcache
+.cache/
+*.cache
 
-# vercel
-.vercel
+# ========== IDE & EDITOR SETTINGS ==========
+.vscode/
+.idea/
+.history/
+*.swp
+*.swo
+*~
+.vim/
+.emacs
+*.sublime-project
+*.sublime-workspace
+*.iml
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+jsconfig.min.js
 
-# typescript
+# ========== OS-SPECIFIC FILES ==========
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# ========== CERTIFICATES & KEYS ==========
+*.pem
+*.key
+*.crt
+*.cert
+
+# ========== MISC ==========
+.turbo/
+.vercel/
+.next-env.d.ts
+
+# ========== TYPESCRIPT ==========
 *.tsbuildinfo
 next-env.d.ts
+
+# ========== DEVELOPMENT ==========
+# Uncomment if you don't want to commit lock files (optional)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
