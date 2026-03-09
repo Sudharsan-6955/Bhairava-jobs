@@ -15,17 +15,14 @@ export function middleware(request) {
     // Check for access token in cookies (HTTP-only) or as fallback check would be done client-side
     const accessToken = request.cookies.get('accessToken')?.value;
     
-    // No token found - redirect to login
+    // NOTE: For deployments where the backend sets HTTP-only cookies on a
+    // different origin (e.g., Render) the cookie will NOT be present on
+    // requests to Vercel. Redirecting from middleware prevents the client-side
+    // auth flow from working (the client stores tokens in localStorage or
+    // relies on backend cookies sent to the backend domain). Therefore we
+    // avoid server-side redirect here and let the client handle auth checks.
     if (!accessToken) {
-      const loginUrl = new URL('/admin/login', request.url);
-      const response = NextResponse.redirect(loginUrl);
-      
-      // Set cache control headers to prevent caching
-      response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
-      response.headers.set('Pragma', 'no-cache');
-      response.headers.set('Expires', '0');
-      
-      return response;
+      return NextResponse.next();
     }
   }
 
