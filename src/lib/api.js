@@ -6,8 +6,14 @@ const DEFAULT_LOCAL = process.env.NEXT_PUBLIC_LOCAL_API_URL || 'http://localhost
 
 function normalizeBase(u) {
   if (!u) return u;
-  // remove trailing slash
-  let url = u.replace(/\/$/, '');
+  // ensure we have a full URL (default to https:// if scheme missing)
+  let url = u.trim();
+  if (!/^[a-zA-Z][a-zA-Z0-9+.-]*:\/\//.test(url)) {
+    // strip leading slashes then prepend https://
+    url = 'https://' + url.replace(/^\/+/, '');
+  }
+  // remove trailing slashes
+  url = url.replace(/\/+$/, '');
   // if path doesn't contain /api segment, append /api
   try {
     const parsed = new URL(url);
@@ -15,7 +21,6 @@ function normalizeBase(u) {
       url = url + '/api';
     }
   } catch (e) {
-    // not a full URL (unlikely), fall back to string check
     if (!/\/api(\/|$)/.test(url)) url = url + '/api';
   }
   return url;
@@ -60,7 +65,7 @@ export async function getApiBaseUrl() {
 
 // Synchronous accessor (returns cached if available, otherwise remote fallback)
 export function getApiBaseUrlSync() {
-  return cachedApiBase || DEFAULT_REMOTE;
+  return cachedApiBase || normalizeBase(DEFAULT_REMOTE);
 }
 
 export default {
