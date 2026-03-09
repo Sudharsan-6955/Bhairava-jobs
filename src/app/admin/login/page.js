@@ -19,9 +19,10 @@ export default function AdminLogin() {
     const checkAuth = async () => {
       const token = localStorage.getItem('accessToken');
       if (token) {
-        const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
-        
         try {
+          const { getApiBaseUrl } = await import('../../../lib/api');
+          const API_URL = await getApiBaseUrl();
+
           const response = await fetch(`${API_URL}/auth/me`, {
             headers: {
               'Authorization': `Bearer ${token}`,
@@ -32,16 +33,13 @@ export default function AdminLogin() {
           });
 
           if (response.ok) {
-            // Already authenticated, redirect to dashboard
             router.replace('/admin/dashboard');
           } else {
-            // Token invalid, clear it
             localStorage.removeItem('accessToken');
             localStorage.removeItem('admin');
             sessionStorage.clear();
           }
         } catch (error) {
-          // Network error, clear token
           localStorage.removeItem('accessToken');
           localStorage.removeItem('admin');
           sessionStorage.clear();
@@ -79,8 +77,9 @@ export default function AdminLogin() {
     }
 
     try {
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
-      
+      const { getApiBaseUrl } = await import('../../../lib/api');
+      const API_URL = await getApiBaseUrl();
+
       const response = await fetch(`${API_URL}/auth/login`, {
         method: 'POST',
         headers: {

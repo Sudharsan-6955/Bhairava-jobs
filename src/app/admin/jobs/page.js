@@ -23,8 +23,22 @@ export default function AdminJobsPage() {
   const [success, setSuccess] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
 
-  const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+  const [apiBaseUrl, setApiBaseUrl] = useState(null);
   const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
+
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const { getApiBaseUrl } = await import('../../../lib/api');
+        const base = await getApiBaseUrl();
+        if (mounted) setApiBaseUrl(base);
+      } catch (e) {
+        if (mounted) setApiBaseUrl(process.env.NEXT_PUBLIC_API_URL || 'https://bhairava-jobs-backend.onrender.com/api');
+      }
+    })();
+    return () => { mounted = false; };
+  }, []);
 
   /**
    * Fetch all jobs created by the admin
@@ -47,7 +61,8 @@ export default function AdminJobsPage() {
         params.set('includeDeleted', 'true');
       }
 
-      const response = await fetch(`${apiBaseUrl}/jobs?${params.toString()}`, {
+      const base = apiBaseUrl || process.env.NEXT_PUBLIC_API_URL || 'https://bhairava-jobs-backend.onrender.com/api';
+      const response = await fetch(`${base}/jobs?${params.toString()}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -105,8 +120,9 @@ export default function AdminJobsPage() {
     try {
       setDeleteLoading(true);
 
+      const base = apiBaseUrl || process.env.NEXT_PUBLIC_API_URL || 'https://bhairava-jobs-backend.onrender.com/api';
       const response = await fetch(
-        `${apiBaseUrl}/jobs/${jobToDelete._id}`,
+        `${base}/jobs/${jobToDelete._id}`,
         {
           method: 'DELETE',
           headers: {

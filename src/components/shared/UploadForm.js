@@ -8,8 +8,9 @@ export default function UploadForm({
   onJobCreated = null,
   onCancel = null,
   token = null,
-  apiBaseUrl = 'http://localhost:5000/api'
+  apiBaseUrl = null
 }) {
+  const [resolvedApiBase, setResolvedApiBase] = useState(apiBaseUrl);
   const [formData, setFormData] = useState({
     title: '',
     company: '',
@@ -34,6 +35,20 @@ export default function UploadForm({
   // Initialize form with selected job
   // ===================================
   useEffect(() => {
+    let mounted = true;
+    (async () => {
+      if (!apiBaseUrl && typeof window !== 'undefined') {
+        try {
+          const { getApiBaseUrl } = await import('../../lib/api');
+          const base = await getApiBaseUrl();
+          if (mounted) setResolvedApiBase(base);
+        } catch (e) {
+          if (mounted) setResolvedApiBase(process.env.NEXT_PUBLIC_API_URL || 'https://bhairava-jobs-backend.onrender.com/api');
+        }
+      }
+    })();
+    return () => { mounted = false; };
+
     if (selectedJob) {
       setIsEditing(true);
       setFormData({
@@ -172,9 +187,10 @@ export default function UploadForm({
         uploadFormData.append('posterImage', currentImageUrl);
       }
 
+      const base = resolvedApiBase || apiBaseUrl || process.env.NEXT_PUBLIC_API_URL || 'https://bhairava-jobs-backend.onrender.com/api';
       const url = isEditing 
-        ? `${apiBaseUrl}/jobs/${selectedJob._id}` 
-        : `${apiBaseUrl}/jobs`;
+        ? `${base}/jobs/${selectedJob._id}` 
+        : `${base}/jobs`;
       
       const method = isEditing ? 'PUT' : 'POST';
 

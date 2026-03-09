@@ -22,7 +22,15 @@ export const useAuth = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+  // Resolve API base at runtime to prefer local during local dev, otherwise deployed
+  const resolveApiUrl = async () => {
+    try {
+      const { getApiBaseUrl } = await import('../lib/api');
+      return await getApiBaseUrl();
+    } catch (e) {
+      return process.env.NEXT_PUBLIC_API_URL || 'https://bhairava-jobs-backend.onrender.com/api';
+    }
+  };
 
   /**
    * Check if user is authenticated
@@ -41,6 +49,7 @@ export const useAuth = () => {
       }
 
       // Verify token with backend
+      const API_URL = await resolveApiUrl();
       const response = await fetch(`${API_URL}/auth/me`, {
         method: 'GET',
         headers: {
@@ -84,6 +93,7 @@ export const useAuth = () => {
    */
   const login = async (email, password) => {
     try {
+      const API_URL = await resolveApiUrl();
       const response = await fetch(`${API_URL}/auth/login`, {
         method: 'POST',
         headers: {
@@ -140,6 +150,7 @@ export const useAuth = () => {
       const token = localStorage.getItem('accessToken');
 
       // Call backend logout
+      const API_URL = await resolveApiUrl();
       await fetch(`${API_URL}/auth/logout`, {
         method: 'POST',
         headers: {
@@ -168,6 +179,7 @@ export const useAuth = () => {
    */
   const refreshToken = async () => {
     try {
+      const API_URL = await resolveApiUrl();
       const response = await fetch(`${API_URL}/auth/refresh`, {
         method: 'POST',
         credentials: 'include' // Refresh token is in HTTP-only cookie
@@ -201,6 +213,9 @@ export const useAuth = () => {
   const authenticatedFetch = async (url, options = {}) => {
     const token = localStorage.getItem('accessToken');
 
+    const API_URL = await resolveApiUrl();
+    const requestUrl = (typeof url === 'string' && url.startsWith('/')) ? `${API_URL}${url}` : url;
+
     const config = {
       ...options,
       headers: {
@@ -211,7 +226,7 @@ export const useAuth = () => {
       credentials: 'include'
     };
 
-    let response = await fetch(url, config);
+    let response = await fetch(requestUrl, config);
 
     // If token expired, try to refresh and retry
     if (response.status === 401) {
