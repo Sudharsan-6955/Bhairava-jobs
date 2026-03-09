@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { getApiBaseUrlSync } from '../lib/api';
 import { useRouter } from 'next/navigation';
 
 /**
@@ -28,7 +29,8 @@ export const useAuth = () => {
       const { getApiBaseUrl } = await import('../lib/api');
       return await getApiBaseUrl();
     } catch (e) {
-      return process.env.NEXT_PUBLIC_API_URL || 'https://bhairava-jobs-backend.onrender.com/api';
+      // Use sync accessor which returns a normalized base
+      return getApiBaseUrlSync();
     }
   };
 

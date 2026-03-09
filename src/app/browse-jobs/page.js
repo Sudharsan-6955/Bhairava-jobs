@@ -1,6 +1,7 @@
 "use client";
 
 import { Suspense, useState, useEffect, useRef, useMemo } from 'react';
+import { getApiBaseUrlSync } from '../../lib/api';
 import Image from 'next/image';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Navbar from '../components/common/Navbar';
@@ -154,7 +155,8 @@ function BrowseJobsContent() {
 					const { getApiBaseUrl } = await import('../../lib/api');
 					apiBaseUrl = await getApiBaseUrl();
 				} catch (e) {
-					apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+					// fallback to the sync accessor which returns a normalized remote base
+					apiBaseUrl = getApiBaseUrlSync();
 				}
 
 				// OPTIMIZATION: If viewing a shared job, fetch ONLY that single job
