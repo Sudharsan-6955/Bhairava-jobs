@@ -7,9 +7,19 @@ import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
 import { formatRelativeTime } from '../../utils/formatDate';
 
+const normalizeId = (value) => String(value ?? '').trim();
+
+const getAppBaseUrl = () => {
+	if (typeof window !== 'undefined' && window.location?.origin) {
+		return window.location.origin;
+	}
+	return process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+};
+
 function BrowseJobsContent() {
 	const searchParams = useSearchParams();
 	const router = useRouter();
+	const sharedJobId = searchParams.get('jobId');
 	const [jobs, setJobs] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [searchInput, setSearchInput] = useState('');
@@ -135,12 +145,55 @@ function BrowseJobsContent() {
 	];
 
 	useEffect(() => {
-		// Fetch jobs from API
+		// Fetch jobs from API - optimized for scalability
 		const fetchJobs = async () => {
 			try {
 				setLoading(true);
-				const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+				// Resolve API base URL at runtime. Prefer local backend when available,
+				// otherwise fallback to deployed Render URL.
+				const { getApiBaseUrl } = await import('../../lib/api');
+				const apiBaseUrl = await getApiBaseUrl();
 
+				// OPTIMIZATION: If viewing a shared job, fetch ONLY that single job
+				if (sharedJobId) {
+					const response = await fetch(`${apiBaseUrl}/jobs/${sharedJobId}`);
+					
+					if (!response.ok) {
+						// Job not found or error - set empty to show error message
+						setJobs([]);
+						setCategories(['All Categories']);
+						setLoading(false);
+						return;
+					}
+
+					const data = await response.json();
+					if (!data.success || !data.data) {
+						setJobs([]);
+						setCategories(['All Categories']);
+						setLoading(false);
+						return;
+					}
+
+					// Format single job
+					const formattedJob = {
+						id: data.data._id,
+						title: data.data.title,
+						location: data.data.location,
+						company: data.data.company,
+						description: data.data.description,
+						image: data.data.posterImage,
+						type: data.data.jobType,
+						category: data.data.category,
+						createdAt: data.data.createdAt,
+					};
+
+					setJobs([formattedJob]);
+					setCategories(['All Categories', formattedJob.category].filter(Boolean));
+					setLoading(false);
+					return;
+				}
+
+				// Normal flow: Fetch all jobs with pagination for browse mode
 				let page = 1;
 				const limit = 50;
 				let totalPages = 1;
@@ -198,7 +251,7 @@ function BrowseJobsContent() {
 		};
 
 		fetchJobs();
-	}, []);
+	}, [sharedJobId]);
 
 	// Initialize category from URL params
 	useEffect(() => {
@@ -215,6 +268,10 @@ function BrowseJobsContent() {
 
 	// Optimized filtering with useMemo
 	const filteredJobs = useMemo(() => {
+		if (sharedJobId) {
+			return jobs.filter((job) => normalizeId(job.id) === normalizeId(sharedJobId));
+		}
+
 		return jobs.filter((job) => {
 			const categoryMatch =
 				selectedCategory === 'All Categories' ||
@@ -231,7 +288,7 @@ function BrowseJobsContent() {
 				(job.category || '').toLowerCase().includes(searchTerm)
 			);
 		});
-	}, [jobs, selectedCategory, searchInput]);
+	}, [jobs, selectedCategory, searchInput, sharedJobId]);
 
 	// Pagination variables
 	const itemsPerPageDesktop = 6;
@@ -286,6 +343,18 @@ function BrowseJobsContent() {
 		}
 
 		return [1, '...', currentPage, '...', totalPages];
+	};
+
+	const createJobShareUrl = (job) => {
+		const params = new URLSearchParams();
+		params.set('jobId', normalizeId(job.id));
+		return `${getAppBaseUrl()}/browse-jobs?${params.toString()}`;
+	};
+
+	const createWhatsAppShareLink = (job) => {
+		const shareUrl = createJobShareUrl(job);
+		const message = `Check out this job opportunity!\n\n${job.title} at ${job.company}\nLocation: ${job.location}\n\nView job: ${shareUrl}`;
+		return `https://wa.me/?text=${encodeURIComponent(message)}`;
 	};
 
 	return (
@@ -374,9 +443,14 @@ function BrowseJobsContent() {
 							)}
 						</div>
 					</div>
-					{selectedCategory !== 'All Categories' && (
+					{selectedCategory !== 'All Categories' && !sharedJobId && (
 						<p className="mt-3 text-sm text-gray-600">
 							Filtered by: <span className="font-semibold text-[#232B3E]">{selectedCategory}</span>
+						</p>
+					)}
+					{sharedJobId && filteredJobs.length > 0 && (
+						<p className="mt-3 text-sm text-gray-600">
+							Showing shared job post
 						</p>
 					)}
 				</div>
@@ -413,16 +487,33 @@ function BrowseJobsContent() {
 									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 21l-4.35-4.35m0 0A7.5 7.5 0 103.5 3.5a7.5 7.5 0 0112.15 12.15z" />
 								</svg>
 							</div>
-							<h3 className="text-2xl font-bold text-[#232B3E] mb-2">No Jobs Found</h3>
-							<p className="text-gray-600 mb-4">
-								We couldn't find any jobs matching "{searchInput}". Try searching with different keywords.
-							</p>
-							<button
-								onClick={() => setSearchInput('')}
-								className="bg-[#D4A037] text-white px-6 py-2 rounded-full text-sm font-semibold hover:bg-[#b88c2c] transition-colors"
-							>
-								Clear Search
-							</button>
+							{sharedJobId ? (
+								<>
+									<h3 className="text-2xl font-bold text-[#232B3E] mb-2">Shared Job Not Found</h3>
+									<p className="text-gray-600 mb-4">
+										This job link may be expired or the post may have been removed.
+									</p>
+									<button
+										onClick={() => router.replace('/browse-jobs')}
+										className="bg-[#D4A037] text-white px-6 py-2 rounded-full text-sm font-semibold hover:bg-[#b88c2c] transition-colors"
+									>
+										View All Jobs
+									</button>
+								</>
+							) : (
+								<>
+									<h3 className="text-2xl font-bold text-[#232B3E] mb-2">No Jobs Found</h3>
+									<p className="text-gray-600 mb-4">
+										We couldn't find any jobs matching "{searchInput}". Try searching with different keywords.
+									</p>
+									<button
+										onClick={() => setSearchInput('')}
+										className="bg-[#D4A037] text-white px-6 py-2 rounded-full text-sm font-semibold hover:bg-[#b88c2c] transition-colors"
+									>
+										Clear Search
+									</button>
+								</>
+							)}
 						</div>
 					) : (
 						<>
@@ -440,6 +531,7 @@ function BrowseJobsContent() {
 													src={job.image}
 													alt={job.title}
 													fill
+													sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
 													loading={index === 0 ? 'eager' : 'lazy'}
 													className="object-center"
 												/>
@@ -448,9 +540,9 @@ function BrowseJobsContent() {
 
 										{/* Job Info */}
 										<div className="px-4 py-2 flex flex-col flex-grow">
-											<h3 className="text-sm font-bold text-[#232B3E] mb-2 break-words">
-												{job.title} <span className="text-gray-500 font-normal text-xs">– {job.location}</span>
-											</h3>
+										<h3 className="text-sm font-bold text-[#232B3E] mb-2 break-words">
+											{job.title} <span className="text-gray-500 font-normal text-xs">– {job.location}</span>
+										</h3>
 
 											<p className="text-xs text-gray-600 mb-2 leading-4 line-clamp-2">
 												{job.description}
@@ -461,7 +553,7 @@ function BrowseJobsContent() {
 													{formatRelativeTime(job.createdAt)}
 												</span>
 												<a
-													href={`https://wa.me/?text=Check%20out%20this%20job%20opportunity%20-%20${job.title}%20at%20${job.company}`}
+													href={createWhatsAppShareLink(job)}
 													target="_blank"
 													rel="noopener noreferrer"
 													className="w-full sm:w-auto justify-center bg-[#D4A037] text-white px-3 md:py-1.5 py-2  rounded-full text-xs font-semibold hover:bg-[#b88c2c] transition-all shadow-md hover:shadow-lg flex items-center gap-1"
@@ -488,7 +580,7 @@ function BrowseJobsContent() {
 							</div>
 
 							{/* Pagination */}
-							{totalPages > 1 && (
+							{totalPages > 1 && !sharedJobId && (
 								<div className="flex flex-wrap justify-center md:justify-end items-center gap-2 mt-8">
 									{/* Previous Button */}
 									<button

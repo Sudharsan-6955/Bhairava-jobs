@@ -1,9 +1,16 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import { Noto_Sans_Tamil } from 'next/font/google';
+
+const tamilFont = Noto_Sans_Tamil({
+	subsets: ['tamil'],
+	weight: ['400', '600'],
+	display: 'swap',
+});
 
 const categories = [
 	{ id: 1, title: 'Schools', image: 'https://picsum.photos/seed/schools/500/320' },
-	{ id: 2, title: 'Hospitals', image: 'https://picsum.photos/seed/hospitals/500/320' },
+	{ id: 2, title: 'Hospitals', displayTitle: 'மருத்துவம்', isTamil: true, image: 'https://picsum.photos/seed/hospitals/500/320' },
 	{ id: 3, title: 'Shops', image: 'https://picsum.photos/seed/shops/500/320' },
 	{ id: 4, title: 'Driver', image: 'https://picsum.photos/seed/driver/500/320' },
 	{ id: 5, title: 'Office Admin', image: 'https://picsum.photos/seed/office-admin/500/320' },
@@ -35,7 +42,9 @@ export default function Categrid() {
 									sizes="(max-width: 768px) 50vw, 25vw"
 								/>
 							</div>
-							<p className="mt-2 text-center text-xs sm:text-sm font-semibold text-slate-700">{category.title}</p>
+							<p className={`mt-2 text-center text-xs sm:text-sm font-semibold text-slate-700 ${category.isTamil ? tamilFont.className : ''}`}>
+								{category.displayTitle ?? category.title}
+							</p>
 						</Link>
 					))}
 				</div>

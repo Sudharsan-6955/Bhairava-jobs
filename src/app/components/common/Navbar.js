@@ -1,30 +1,161 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 
 export default function Navbar() {
 	const [menuOpen, setMenuOpen] = useState(false);
+	const [langOpen, setLangOpen] = useState(false);
+	const supportedLangs = [
+		{ code: 'en', label: 'English' },
+		{ code: 'ta', label: 'தமிழ்' },
+		{ code: 'hi', label: 'हिन्दी' },
+		{ code: 'fr', label: 'Français' },
+		{ code: 'es', label: 'Español' },
+	];
+	const pathname = usePathname();
+
+	useEffect(() => {
+		if (typeof window === 'undefined') return;
+
+		// Avoid adding the script multiple times
+		if (document.getElementById('google-translate-script')) return;
+
+		// Provide the global callback expected by Google's script
+		window.googleTranslateElementInit = function () {
+			if (window.google && window.google.translate) {
+				new window.google.translate.TranslateElement({ pageLanguage: 'en' }, 'google_translate_element');
+			}
+		};
+
+		const s = document.createElement('script');
+		s.id = 'google-translate-script';
+		s.src = '//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+		s.async = true;
+		document.body.appendChild(s);
+
+		// Inject CSS to hide Google's default UI (we use our own). Use broad selectors and !important.
+		const style = document.createElement('style');
+		style.id = 'google-translate-hide-style';
+		style.innerHTML = `
+			#google_translate_element { display: none !important; }
+			.goog-te-banner-frame, .goog-te-banner-frame.skiptranslate, iframe.goog-te-banner-frame { display: none !important; visibility: hidden !important; height: 0 !important; }
+			.goog-te-gadget, .goog-te-gadget-icon, .goog-te-combo, .goog-te-menu-value, .goog-te-spinner { display: none !important; }
+			.skiptranslate, .goog-te-banner { display: none !important; }
+			/* ensure body isn't shifted by translate toolbar */
+			body { top: 0 !important; }
+		`;
+		document.head.appendChild(style);
+
+		// Function to remove/hide elements injected by Google Translate
+		function hideGoogleElements() {
+			try {
+				const selectors = [
+					'.goog-te-banner-frame',
+					'.goog-te-banner-frame.skiptranslate',
+					'iframe[src*="translate"]',
+					'.goog-te-gadget',
+					'.goog-te-gadget-icon',
+					'.goog-te-combo',
+					'.goog-te-menu-value',
+					'.goog-te-spinner',
+				];
+				selectors.forEach((sel) => {
+					document.querySelectorAll(sel).forEach((el) => {
+						try {
+							if (el.tagName === 'IFRAME') {
+								el.style.display = 'none';
+								el.style.visibility = 'hidden';
+								el.width = '0';
+								el.height = '0';
+							}
+							el.remove();
+						} catch (e) {}
+					});
+				});
+			} catch (e) {}
+		}
+
+		// Run immediately and observe DOM for any future injections
+		hideGoogleElements();
+
+		const intervalId = setInterval(hideGoogleElements, 700);
+
+		const observer = new MutationObserver(() => hideGoogleElements());
+		observer.observe(document.body, { childList: true, subtree: true });
+
+		// stop checks after a short while
+		setTimeout(() => {
+			clearInterval(intervalId);
+			observer.disconnect();
+		}, 10000);
+
+		return () => {
+			// leave the script in place; cleanup if you need to remove it on nav change
+		};
+	}, []);
+
+	function setLanguage(lang) {
+		if (typeof document === 'undefined') return;
+
+		// Set googtrans cookie used by Google Translate widget
+		const cookieValue = `/en/${lang}`;
+		const expires = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toUTCString();
+		document.cookie = `googtrans=${cookieValue}; expires=${expires}; path=/`;
+
+		// Also set two more cookies Google sometimes checks
+		document.cookie = `googtrans=${cookieValue}; domain=${window.location.hostname}; expires=${expires}; path=/`;
+
+		// Reload to apply translation
+		window.location.reload();
+	}
 
 	return (
 		<nav className="fixed top-0 left-0  z-50 bg-white shadow-md w-full">
-			<div className="flex items-center  justify-between mx-auto px-4 md:px-8 lg:px-20 py-5 max-w-7xl">
+			<div className="flex items-center  justify-between mx-auto px-4 md:px-8 lg:px-20 py-3 max-w-7xl">
 				<div className="flex items-center">
 					<Image
 						src="/images/logo.svg"
 						alt="Bhairava Jobs Logo"
 						width={100}
 						height={100}
-						style={{ height: 'auto' }}
+						style={{ width: 'auto', height: 'auto' }}
+						priority
 					/>
 				</div>
 				{/* Desktop Menu */}
 				<div className="hidden md:flex gap-8 items-center">
-					<Link href="/" className="text-[#232B3E] font-medium text-base hover:text-[#D4A037] transition-colors">Home</Link>
-					<Link href="/browse-jobs" className="text-[#232B3E] font-medium text-base hover:text-[#D4A037] transition-colors">Browse Jobs</Link>
-					<Link href="/about" className="text-[#232B3E] font-medium text-base hover:text-[#D4A037] transition-colors">About</Link>
-					<Link href="/contact" className="text-[#232B3E] font-medium text-base hover:text-[#D4A037] transition-colors">Contact</Link>
+							{/* Language selector (custom) */}
+							<div className="relative">
+								<button
+									aria-label="Language"
+									onClick={() => setLangOpen(!langOpen)}
+									className="flex items-center gap-2 p-2 rounded hover:bg-slate-100"
+								>
+									{/* Globe icon */}
+									<svg className="w-5 h-5 text-[#232B3E]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+										<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 2a10 10 0 100 20 10 10 0 000-20zM2 12h20M12 2c2.21 2.21 3.5 5.22 3.5 8s-1.29 5.79-3.5 8M12 22c-2.21-2.21-3.5-5.22-3.5-8s1.29-5.79 3.5-8" />
+									</svg>
+								</button>
+								{langOpen && (
+									<div className="absolute right-0 mt-2 w-40 bg-white border rounded shadow-sm z-50">
+										{supportedLangs.map((l) => (
+											<button key={l.code} onClick={() => setLanguage(l.code)} className="w-full text-left px-3 py-2 hover:bg-slate-100">
+												{l.label}
+											</button>
+										))}
+										<button onClick={() => setLanguage('en')} className="w-full text-left px-3 py-2 hover:bg-slate-100">Original</button>
+									</div>
+								)}
+								{/* Hidden Google element (script needs it) */}
+								<div id="google_translate_element" className="hidden" />
+							</div>
+					<Link href="/" className={`font-medium text-base hover:text-[#D4A037] transition-colors ${pathname === '/' || pathname === '/home' ? 'text-[#D4A037] ' : 'text-[#232B3E]'}`}>Home</Link>
+					<Link href="/browse-jobs" className={`font-medium text-base hover:text-[#D4A037] transition-colors ${pathname === '/browse-jobs' ? 'text-[#D4A037] ' : 'text-[#232B3E]'}`}>Browse Jobs</Link>
+					<Link href="/about" className={`font-medium text-base hover:text-[#D4A037] transition-colors ${pathname === '/about' ? 'text-[#D4A037] ' : 'text-[#232B3E]'}`}>About</Link>
+					<Link href="/contact" className={`font-medium text-base hover:text-[#D4A037] transition-colors ${pathname === '/contact' ? 'text-[#D4A037] ' : 'text-[#232B3E]'}`}>Contact</Link>
 				</div>
 				<div className="hidden md:block">
 					<Link href="/contact">
@@ -53,10 +184,10 @@ export default function Navbar() {
 			{/* Mobile Menu */}
 			{menuOpen && (
 		<div className="md:hidden mx-4 mb-3 rounded-2xl border border-white/30 bg-white/60 backdrop-blur-lg shadow-2xl px-5 py-5 flex flex-col gap-4">
-					<Link href="/" className="text-[#232B3E] font-semibold text-[15px] leading-6 hover:text-[#D4A037] transition-colors" onClick={() => setMenuOpen(false)}>Home</Link>
-					<Link href="/browse-jobs" className="text-[#232B3E] font-semibold text-[15px] leading-6 hover:text-[#D4A037] transition-colors" onClick={() => setMenuOpen(false)}>Browse Jobs</Link>
-					<Link href="/about" className="text-[#232B3E] font-semibold text-[15px] leading-6 hover:text-[#D4A037] transition-colors" onClick={() => setMenuOpen(false)}>About</Link>
-					<Link href="/contact" className="text-[#232B3E] font-semibold text-[15px] leading-6 hover:text-[#D4A037] transition-colors" onClick={() => setMenuOpen(false)}>Contact</Link>
+					<Link href="/" className={`font-medium text-[15px] leading-6 hover:text-[#D4A037] transition-colors ${pathname === '/' || pathname === '/home' ? 'text-[#D4A037] underline underline-offset-4' : 'text-[#232B3E]'}`} onClick={() => setMenuOpen(false)}>Home</Link>
+					<Link href="/browse-jobs" className={`font-medium text-[15px] leading-6 hover:text-[#D4A037] transition-colors ${pathname === '/browse-jobs' ? 'text-[#D4A037] underline underline-offset-4' : 'text-[#232B3E]'}`} onClick={() => setMenuOpen(false)}>Browse Jobs</Link>
+					<Link href="/about" className={`font-medium text-[15px] leading-6 hover:text-[#D4A037] transition-colors ${pathname === '/about' ? 'text-[#D4A037] underline underline-offset-4' : 'text-[#232B3E]'}`} onClick={() => setMenuOpen(false)}>About</Link>
+					<Link href="/contact" className={`font-medium text-[15px] leading-6 hover:text-[#D4A037] transition-colors ${pathname === '/contact' ? 'text-[#D4A037] underline underline-offset-4' : 'text-[#232B3E]'}`} onClick={() => setMenuOpen(false)}>Contact</Link>
 					<Link href="/contact">
 						<button className="bg-[#D4A037] text-white rounded-full px-6 py-2.5 font-semibold text-[15px] cursor-pointer shadow-md hover:bg-[#b88c2c] transition-colors w-full mt-2" onClick={() => setMenuOpen(false)}>
 							Get In Touch

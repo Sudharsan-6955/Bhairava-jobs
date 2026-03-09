@@ -1,5 +1,6 @@
 /**
- * Format a date to show relative time (e.g., "2 days ago", "1 week ago")
+ * Format a date to show relative time within 24 hours,
+ * then fallback to DD/MM/YY date format.
  * @param {string|Date} date - The date to format
  * @returns {string} Formatted date string
  */
@@ -16,10 +17,12 @@ export function formatRelativeTime(date) {
   const diffInSeconds = Math.floor(diffInMilliseconds / 1000);
   const diffInMinutes = Math.floor(diffInSeconds / 60);
   const diffInHours = Math.floor(diffInMinutes / 60);
-  const diffInDays = Math.floor(diffInHours / 24);
-  const diffInWeeks = Math.floor(diffInDays / 7);
-  const diffInMonths = Math.floor(diffInDays / 30);
-  const diffInYears = Math.floor(diffInDays / 365);
+  const formatAsDDMMYY = (value) => {
+    const day = String(value.getDate()).padStart(2, '0');
+    const month = String(value.getMonth() + 1).padStart(2, '0');
+    const year = String(value.getFullYear()).slice(-2);
+    return `${day}/${month}/${year}`;
+  };
   
   if (diffInSeconds < 60) {
     return 'Just now';
@@ -27,14 +30,8 @@ export function formatRelativeTime(date) {
     return `${diffInMinutes} ${diffInMinutes === 1 ? 'minute' : 'minutes'} ago`;
   } else if (diffInHours < 24) {
     return `${diffInHours} ${diffInHours === 1 ? 'hour' : 'hours'} ago`;
-  } else if (diffInDays < 7) {
-    return `${diffInDays} ${diffInDays === 1 ? 'day' : 'days'} ago`;
-  } else if (diffInWeeks < 4) {
-    return `${diffInWeeks} ${diffInWeeks === 1 ? 'week' : 'weeks'} ago`;
-  } else if (diffInMonths < 12) {
-    return `${diffInMonths} ${diffInMonths === 1 ? 'month' : 'months'} ago`;
   } else {
-    return `${diffInYears} ${diffInYears === 1 ? 'year' : 'years'} ago`;
+    return formatAsDDMMYY(postDate);
   }
 }
 
