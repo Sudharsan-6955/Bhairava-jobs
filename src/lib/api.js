@@ -1,61 +1,52 @@
-// Resolve backend base URL at runtime: prefer local if available, otherwise fallback to deployed.
-export async function getApiBaseUrl({ timeout = 1000 } = {}) {
-  const normalize = (u) => (u ? u.replace(/\/+$/u, '') : u);
+// Runtime API resolver: prefer local backend when available, otherwise use deployed backend
+let cachedApiBase = null;
 
-  const deployedRaw = process.env.NEXT_PUBLIC_API_URL || 'https://bhairava-jobs-backend.onrender.com/api';
-  // Normalize and ensure it has the /api suffix (no duplicate slashes)
-  const ensureApiSuffix = (u) => {
-    if (!u) return u;
-    const trimmed = u.replace(/\/+$/u, '');
-    return trimmed.endsWith('/api') ? trimmed : `${trimmed}/api`;
-  };
+const DEFAULT_REMOTE = process.env.NEXT_PUBLIC_API_URL || 'https://bhairava-jobs-backend.onrender.com/api';
+const DEFAULT_LOCAL = process.env.NEXT_PUBLIC_LOCAL_API_URL || 'http://localhost:5000/api';
 
-  const deployed = ensureApiSuffix(deployedRaw);
-  const localRaw = 'http://localhost:5000/api';
-  const local = ensureApiSuffix(localRaw);
-
-  if (typeof window === 'undefined') {
-    // On server, return configured deployed URL
-    return deployed;
-  }
-
-  // Cache on window to avoid repeated probes
-  if (window.__API_BASE_URL) return window.__API_BASE_URL;
-
-  // If frontend is not running locally, DO NOT probe loopback/local addresses.
-  // Browsers block public -> private address space requests (Private Network Access).
-  const hostname = window.location && window.location.hostname;
-  const isLocalFrontend = hostname === 'localhost' || hostname === '127.0.0.1';
-  if (!isLocalFrontend) {
-    window.__API_BASE_URL = deployed;
-    return deployed;
-  }
-
-  // If frontend is local, probe local backend with timeout. If it responds, prefer local.
+async function probeHealth(url, timeout = 1200) {
   try {
     const controller = new AbortController();
     const id = setTimeout(() => controller.abort(), timeout);
-    const res = await fetch(`${local}/health`, { signal: controller.signal });
+    const res = await fetch(`${url.replace(/\/$/,'')}/health`, {
+      method: 'GET',
+      signal: controller.signal,
+      cache: 'no-store'
+    });
     clearTimeout(id);
-    if (res && res.ok) {
-      window.__API_BASE_URL = local;
-      return local;
-    }
+    if (!res.ok) return false;
+    const json = await res.json().catch(() => null);
+    return json && (json.success === true || json.status === 'healthy');
   } catch (e) {
-    // probe failed or timed out — fall back to deployed
+    return false;
   }
-
-  window.__API_BASE_URL = deployed;
-  return deployed;
 }
 
-// Synchronous convenience getter that returns cached or deployed value.
+/**
+ * Returns the API base URL to use at runtime.
+ * - Tries local backend first (fast timeout).
+ * - Falls back to remote backend if local unreachable.
+ * - Respects NEXT_PUBLIC_API_URL / NEXT_PUBLIC_LOCAL_API_URL env overrides.
+ */
+export async function getApiBaseUrl() {
+  if (cachedApiBase) return cachedApiBase;
+
+  // If an explicit env indicates only remote, use it
+  const remote = DEFAULT_REMOTE;
+  const local = DEFAULT_LOCAL;
+
+  // Try local first with short timeout
+  const localOk = await probeHealth(local, 1000);
+  cachedApiBase = localOk ? local : remote;
+  return cachedApiBase;
+}
+
+// Synchronous accessor (returns cached if available, otherwise remote fallback)
 export function getApiBaseUrlSync() {
-  const normalize = (u) => (u ? u.replace(/\/+$/u, '') : u);
-  const deployedRaw = process.env.NEXT_PUBLIC_API_URL || 'https://bhairava-jobs-backend.onrender.com/api';
-  const deployed = normalize(deployedRaw);
-
-  if (typeof window === 'undefined') return deployed;
-  const cached = window.__API_BASE_URL || process.env.NEXT_PUBLIC_API_URL || deployed;
-  return normalize(cached);
+  return cachedApiBase || DEFAULT_REMOTE;
 }
+
+export default {
+  getApiBaseUrl,
+  getApiBaseUrlSync
+};

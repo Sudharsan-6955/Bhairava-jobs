@@ -11,7 +11,13 @@ export default function AdminLayout({ children }) {
 
   const verifyAuthentication = useCallback(async () => {
     const token = localStorage.getItem('accessToken');
-    const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+    let apiBaseUrl;
+    try {
+      const { getApiBaseUrl } = await import('../../lib/api');
+      apiBaseUrl = await getApiBaseUrl();
+    } catch (e) {
+      apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+    }
 
     // No token, redirect immediately
     if (!token) {
@@ -60,7 +66,13 @@ export default function AdminLayout({ children }) {
 
   const handleLogout = async () => {
     const token = localStorage.getItem('accessToken');
-    const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+    let apiBaseUrl;
+    try {
+      const { getApiBaseUrl } = await import('../../lib/api');
+      apiBaseUrl = await getApiBaseUrl();
+    } catch (e) {
+      apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+    }
 
     setIsLoading(true);
 

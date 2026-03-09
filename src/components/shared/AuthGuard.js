@@ -28,7 +28,13 @@ export default function AuthGuard({ children }) {
       }
 
       const token = localStorage.getItem('accessToken');
-      const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+      let apiBaseUrl;
+      try {
+        const { getApiBaseUrl } = await import('../../lib/api');
+        apiBaseUrl = await getApiBaseUrl();
+      } catch (e) {
+        apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+      }
 
       // No token found - redirect immediately
       if (!token) {

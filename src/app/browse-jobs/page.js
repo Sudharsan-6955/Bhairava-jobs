@@ -149,10 +149,13 @@ function BrowseJobsContent() {
 		const fetchJobs = async () => {
 			try {
 				setLoading(true);
-				// Resolve API base URL at runtime. Prefer local backend when available,
-				// otherwise fallback to deployed Render URL.
-				const { getApiBaseUrl } = await import('../../lib/api');
-				const apiBaseUrl = await getApiBaseUrl();
+				let apiBaseUrl;
+				try {
+					const { getApiBaseUrl } = await import('../../lib/api');
+					apiBaseUrl = await getApiBaseUrl();
+				} catch (e) {
+					apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+				}
 
 				// OPTIMIZATION: If viewing a shared job, fetch ONLY that single job
 				if (sharedJobId) {
