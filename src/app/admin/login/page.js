@@ -80,7 +80,9 @@ export default function AdminLogin() {
       const { getApiBaseUrl } = await import('../../../lib/api');
       const API_URL = await getApiBaseUrl();
 
-      const response = await fetch(`${API_URL}/auth/login`, {
+      const loginUrl = `${API_URL}/auth/login`;
+      console.debug('Login URL:', loginUrl);
+      const response = await fetch(loginUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

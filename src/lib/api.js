@@ -4,6 +4,23 @@ let cachedApiBase = null;
 const DEFAULT_REMOTE = process.env.NEXT_PUBLIC_API_URL || 'https://bhairava-jobs-backend.onrender.com/api';
 const DEFAULT_LOCAL = process.env.NEXT_PUBLIC_LOCAL_API_URL || 'http://localhost:5000/api';
 
+function normalizeBase(u) {
+  if (!u) return u;
+  // remove trailing slash
+  let url = u.replace(/\/$/, '');
+  // if path doesn't contain /api segment, append /api
+  try {
+    const parsed = new URL(url);
+    if (!/\/api(\/|$)/.test(parsed.pathname)) {
+      url = url + '/api';
+    }
+  } catch (e) {
+    // not a full URL (unlikely), fall back to string check
+    if (!/\/api(\/|$)/.test(url)) url = url + '/api';
+  }
+  return url;
+}
+
 async function probeHealth(url, timeout = 1200) {
   try {
     const controller = new AbortController();
@@ -32,8 +49,8 @@ export async function getApiBaseUrl() {
   if (cachedApiBase) return cachedApiBase;
 
   // If an explicit env indicates only remote, use it
-  const remote = DEFAULT_REMOTE;
-  const local = DEFAULT_LOCAL;
+  const remote = normalizeBase(DEFAULT_REMOTE);
+  const local = normalizeBase(DEFAULT_LOCAL);
 
   // Try local first with short timeout
   const localOk = await probeHealth(local, 1000);
