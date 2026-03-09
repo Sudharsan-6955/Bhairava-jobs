@@ -34,7 +34,8 @@ export default function AdminJobsPage() {
         const base = await getApiBaseUrl();
         if (mounted) setApiBaseUrl(base);
       } catch (e) {
-        if (mounted) setApiBaseUrl(process.env.NEXT_PUBLIC_API_URL || 'https://bhairava-jobs-backend.onrender.com/api');
+        const { getApiBaseUrlSync } = await import('../../../lib/api');
+        if (mounted) setApiBaseUrl(getApiBaseUrlSync());
       }
     })();
     return () => { mounted = false; };
@@ -61,7 +62,8 @@ export default function AdminJobsPage() {
         params.set('includeDeleted', 'true');
       }
 
-      const base = apiBaseUrl || process.env.NEXT_PUBLIC_API_URL || 'https://bhairava-jobs-backend.onrender.com/api';
+      const { getApiBaseUrlSync } = await import('../../../lib/api');
+      const base = apiBaseUrl || getApiBaseUrlSync();
       const response = await fetch(`${base}/jobs?${params.toString()}`, {
         method: 'GET',
         headers: {
@@ -120,7 +122,8 @@ export default function AdminJobsPage() {
     try {
       setDeleteLoading(true);
 
-      const base = apiBaseUrl || process.env.NEXT_PUBLIC_API_URL || 'https://bhairava-jobs-backend.onrender.com/api';
+      const { getApiBaseUrlSync } = await import('../../../lib/api');
+      const base = apiBaseUrl || getApiBaseUrlSync();
       const response = await fetch(
         `${base}/jobs/${jobToDelete._id}`,
         {
