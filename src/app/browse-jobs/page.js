@@ -159,7 +159,9 @@ function BrowseJobsContent() {
 
 				// OPTIMIZATION: If viewing a shared job, fetch ONLY that single job
 				if (sharedJobId) {
-					const response = await fetch(`${apiBaseUrl}/jobs/${sharedJobId}`);
+					const base = (apiBaseUrl || '').replace(/\/+$/,'');
+					const url = `${base}/${['jobs', String(sharedJobId)].map(s => String(s).replace(/^\/+/, '')).join('/')}`;
+					const response = await fetch(url);
 					
 					if (!response.ok) {
 						// Job not found or error - set empty to show error message
@@ -198,12 +200,12 @@ function BrowseJobsContent() {
 
 				// Normal flow: Fetch all jobs with pagination for browse mode
 				let page = 1;
-				const limit = 50;
-				let totalPages = 1;
+				const limit = 100; // increase limit to reduce number of requests
 				const allJobs = [];
-
-				do {
-					const response = await fetch(`${apiBaseUrl}/jobs?page=${page}&limit=${limit}`);
+				while (true) {
+					const base = (apiBaseUrl || '').replace(/\/+$/,'');
+					const url = `${base}/jobs?page=${page}&limit=${limit}`;
+					const response = await fetch(url);
 					if (!response.ok) {
 						throw new Error(`Failed to fetch jobs: ${response.status}`);
 					}
@@ -214,9 +216,15 @@ function BrowseJobsContent() {
 					}
 
 					allJobs.push(...data.data);
-					totalPages = data.totalPages || 1;
+
+					// If server provides totalPages, use it. Otherwise stop when a page returns fewer items than requested.
+					if (typeof data.totalPages === 'number') {
+						if (page >= data.totalPages) break;
+					} else if (data.data.length < limit) {
+						break;
+					}
 					page += 1;
-				} while (page <= totalPages);
+				}
 
 				if (allJobs.length > 0) {
 					// Map API data to match frontend format
