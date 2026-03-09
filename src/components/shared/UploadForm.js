@@ -47,7 +47,6 @@ export default function UploadForm({
         }
       }
     })();
-    return () => { mounted = false; };
 
     if (selectedJob) {
       setIsEditing(true);
@@ -82,6 +81,7 @@ export default function UploadForm({
     }
     setError('');
     setSuccess(false);
+    return () => { mounted = false; };
   }, [selectedJob]);
 
   /**

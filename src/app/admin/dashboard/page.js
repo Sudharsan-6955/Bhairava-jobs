@@ -24,11 +24,18 @@ export default function AdminDashboard() {
     useEffect(() => {
         const verifyAccess = async () => {
             const token = localStorage.getItem('accessToken');
-            const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
             if (!token) {
                 router.replace('/admin/login');
                 return;
+            }
+
+            let apiBaseUrl;
+            try {
+                const { getApiBaseUrl } = await import('../../../lib/api');
+                apiBaseUrl = await getApiBaseUrl();
+            } catch (e) {
+                apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
             }
 
             try {
@@ -42,14 +49,17 @@ export default function AdminDashboard() {
                 });
 
                 if (!response.ok) {
+                    // If the token is invalid or the endpoint returned an error, clear and redirect
                     localStorage.clear();
                     router.replace('/admin/login');
                     return;
                 }
 
                 setIsVerifying(false);
-            } catch (error) {
-                console.error('Auth verification failed:', error);
+            } catch (err) {
+                // Network-level failures end up here (e.g., CORS, DNS, or fetch aborted)
+                console.error('Auth verification failed:', err);
+                // Clear local auth and redirect to login since verification couldn't complete
                 localStorage.clear();
                 router.replace('/admin/login');
             }
@@ -102,7 +112,13 @@ export default function AdminDashboard() {
         setIsSubmitting(true);
 
         try {
-            const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+            let apiBaseUrl;
+            try {
+                const { getApiBaseUrl } = await import('../../../lib/api');
+                apiBaseUrl = await getApiBaseUrl();
+            } catch (e) {
+                apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+            }
             const payload = new FormData();
 
             payload.append('title', formData.title);
