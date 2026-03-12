@@ -2,6 +2,7 @@
 "use client";
 import { useEffect, useState } from 'react';
 import { Inter } from 'next/font/google';
+import api from '@/lib/api';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -9,13 +10,12 @@ const TestimonialsSection = () => {
     const [testimonials, setTestimonials] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
-
     useEffect(() => {
         let mounted = true;
         const fetchTestimonials = async () => {
             try {
-                const res = await fetch(`${API_BASE}/api/testimonials?limit=20`);
+                const base = await api.getApiBaseUrl();
+                const res = await fetch(`${base}/testimonials?limit=20`);
                 const data = await res.json();
                 if (!mounted) return;
                 if (res.ok && data && data.data) {

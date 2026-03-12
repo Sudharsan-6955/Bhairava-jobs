@@ -1,5 +1,6 @@
 "use client";
 import { useState, useRef, useEffect } from 'react';
+import api from '@/lib/api';
 
 export default function TestimonialForm() {
     const [name, setName] = useState('');
@@ -11,14 +12,13 @@ export default function TestimonialForm() {
     const [success, setSuccess] = useState(null);
     const timerRef = useRef(null);
 
-    const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
-
     const submit = async (e) => {
         e.preventDefault();
         setLoading(true);
         setSuccess(null);
         try {
-            const res = await fetch(`${API_BASE}/api/testimonials`, {
+            const base = await api.getApiBaseUrl();
+            const res = await fetch(`${base}/testimonials`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name, email, company, message, rating })
