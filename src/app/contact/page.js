@@ -11,7 +11,6 @@ export default function ContactPage() {
                 {/* Hero Section */}
                 <section className="px-6 pt-24 max-w-6xl mx-auto">
                     <div className="text-center">
-                        {/* Tagline */}
                         <div className='mx-auto w-fit mb-6 md:mb-10 bg-gray-200 rounded-3xl'>
                             <p className="text-md px-3 text-center font-medium text-gray-600 tracking-wide">
                                 Connecting Opportunities That Matter
