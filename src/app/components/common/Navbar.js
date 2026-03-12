@@ -12,8 +12,6 @@ export default function Navbar() {
 		{ code: 'en', label: 'English' },
 		{ code: 'ta', label: 'தமிழ்' },
 		{ code: 'hi', label: 'हिन्दी' },
-		{ code: 'fr', label: 'Français' },
-		{ code: 'es', label: 'Español' },
 	];
 	const pathname = usePathname();
 
@@ -40,10 +38,16 @@ export default function Navbar() {
 		const style = document.createElement('style');
 		style.id = 'google-translate-hide-style';
 		style.innerHTML = `
+			/* hide the hidden container used by our integration */
 			#google_translate_element { display: none !important; }
-			.goog-te-banner-frame, .goog-te-banner-frame.skiptranslate, iframe.goog-te-banner-frame { display: none !important; visibility: hidden !important; height: 0 !important; }
-			.goog-te-gadget, .goog-te-gadget-icon, .goog-te-combo, .goog-te-menu-value, .goog-te-spinner { display: none !important; }
-			.skiptranslate, .goog-te-banner { display: none !important; }
+			/* banner / frames */
+			.goog-te-banner-frame, .goog-te-banner-frame.skiptranslate, iframe.goog-te-banner-frame, .goog-te-vertical-frame, .goog-te-balloon-frame { display: none !important; visibility: hidden !important; height: 0 !important; width: 0 !important; }
+			/* gadget, logo, combo, menu, spinner */
+			.goog-te-gadget, .goog-te-gadget-icon, .goog-te-gadget-logo, .goog-te-combo, .goog-te-menu-value, .goog-te-spinner, .goog-logo-link, .goog-logo { display: none !important; visibility: hidden !important; }
+			/* other UI pieces */
+			.skiptranslate, .goog-te-banner, .goog-close-link { display: none !important; }
+			/* hide any iframes or images Google injects */
+			iframe[src*="translate"], img[src*="translate"], img[alt*="Translate"], img[alt*="translate"], img[alt*="google"], img[class*="goog"] { display: none !important; visibility: hidden !important; width: 0 !important; height: 0 !important; }
 			/* ensure body isn't shifted by translate toolbar */
 			body { top: 0 !important; }
 		`;
@@ -56,11 +60,16 @@ export default function Navbar() {
 					'.goog-te-banner-frame',
 					'.goog-te-banner-frame.skiptranslate',
 					'iframe[src*="translate"]',
+					'img[src*="translate"]',
 					'.goog-te-gadget',
 					'.goog-te-gadget-icon',
+					'.goog-te-gadget-logo',
 					'.goog-te-combo',
 					'.goog-te-menu-value',
 					'.goog-te-spinner',
+					'.goog-logo-link',
+					'.goog-logo',
+					'.goog-close-link',
 				];
 				selectors.forEach((sel) => {
 					document.querySelectorAll(sel).forEach((el) => {
@@ -142,11 +151,10 @@ export default function Navbar() {
 								{langOpen && (
 									<div className="absolute right-0 mt-2 w-40 bg-white border rounded shadow-sm z-50">
 										{supportedLangs.map((l) => (
-											<button key={l.code} onClick={() => setLanguage(l.code)} className="w-full text-left px-3 py-2 hover:bg-slate-100">
+											<button key={l.code} onClick={() => setLanguage(l.code)} className="w-full text-left px-3 py-2 hover:bg-slate-100 text-gray-700">
 												{l.label}
 											</button>
 										))}
-										<button onClick={() => setLanguage('en')} className="w-full text-left px-3 py-2 hover:bg-slate-100">Original</button>
 									</div>
 								)}
 								{/* Hidden Google element (script needs it) */}
@@ -155,6 +163,7 @@ export default function Navbar() {
 					<Link href="/" className={`font-medium text-base hover:text-[#D4A037] transition-colors ${pathname === '/' || pathname === '/home' ? 'text-[#D4A037] ' : 'text-[#232B3E]'}`}>Home</Link>
 					<Link href="/browse-jobs" className={`font-medium text-base hover:text-[#D4A037] transition-colors ${pathname === '/browse-jobs' ? 'text-[#D4A037] ' : 'text-[#232B3E]'}`}>Browse Jobs</Link>
 					<Link href="/about" className={`font-medium text-base hover:text-[#D4A037] transition-colors ${pathname === '/about' ? 'text-[#D4A037] ' : 'text-[#232B3E]'}`}>About</Link>
+					<Link href="/testimonials" className={`font-medium text-base hover:text-[#D4A037] transition-colors ${pathname === '/testimonials' ? 'text-[#D4A037] ' : 'text-[#232B3E]'}`}>Testimonials</Link>
 					<Link href="/contact" className={`font-medium text-base hover:text-[#D4A037] transition-colors ${pathname === '/contact' ? 'text-[#D4A037] ' : 'text-[#232B3E]'}`}>Contact</Link>
 				</div>
 				<div className="hidden md:block">
@@ -187,6 +196,7 @@ export default function Navbar() {
 					<Link href="/" className={`font-medium text-[15px] leading-6 hover:text-[#D4A037] transition-colors ${pathname === '/' || pathname === '/home' ? 'text-[#D4A037] underline underline-offset-4' : 'text-[#232B3E]'}`} onClick={() => setMenuOpen(false)}>Home</Link>
 					<Link href="/browse-jobs" className={`font-medium text-[15px] leading-6 hover:text-[#D4A037] transition-colors ${pathname === '/browse-jobs' ? 'text-[#D4A037] underline underline-offset-4' : 'text-[#232B3E]'}`} onClick={() => setMenuOpen(false)}>Browse Jobs</Link>
 					<Link href="/about" className={`font-medium text-[15px] leading-6 hover:text-[#D4A037] transition-colors ${pathname === '/about' ? 'text-[#D4A037] underline underline-offset-4' : 'text-[#232B3E]'}`} onClick={() => setMenuOpen(false)}>About</Link>
+					<Link href="/testimonials" className={`font-medium text-[15px] leading-6 hover:text-[#D4A037] transition-colors ${pathname === '/testimonials' ? 'text-[#D4A037] underline underline-offset-4' : 'text-[#232B3E]'}`} onClick={() => setMenuOpen(false)}>Testimonials</Link>
 					<Link href="/contact" className={`font-medium text-[15px] leading-6 hover:text-[#D4A037] transition-colors ${pathname === '/contact' ? 'text-[#D4A037] underline underline-offset-4' : 'text-[#232B3E]'}`} onClick={() => setMenuOpen(false)}>Contact</Link>
 					<Link href="/contact">
 						<button className="bg-[#D4A037] text-white rounded-full px-6 py-2.5 font-semibold text-[15px] cursor-pointer shadow-md hover:bg-[#b88c2c] transition-colors w-full mt-2" onClick={() => setMenuOpen(false)}>

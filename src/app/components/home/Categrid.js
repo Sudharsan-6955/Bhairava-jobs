@@ -10,7 +10,7 @@ const tamilFont = Noto_Sans_Tamil({
 
 const categories = [
 	{ id: 1, title: 'Schools', image: 'https://picsum.photos/seed/schools/500/320' },
-	{ id: 2, title: 'Hospitals', displayTitle: 'மருத்துவம்', isTamil: true, image: 'https://picsum.photos/seed/hospitals/500/320' },
+	{ id: 2, title: 'Hospitals', image: 'https://picsum.photos/seed/hospitals/500/320' },
 	{ id: 3, title: 'Shops', image: 'https://picsum.photos/seed/shops/500/320' },
 	{ id: 4, title: 'Driver', image: 'https://picsum.photos/seed/driver/500/320' },
 	{ id: 5, title: 'Office Admin', image: 'https://picsum.photos/seed/office-admin/500/320' },

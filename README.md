@@ -38,8 +38,7 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 ## Deployment notes for Vercel + Render
 
 1. On Render (backend) set the `CLIENT_URL` environment variable to include your frontend origin(s):
-
-	Example:
+	exmaples :
 
 	CLIENT_URL=https://bhairava-jobs.vercel.app,http://localhost:3000
 
@@ -53,4 +52,3 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 4. The client includes a lightweight runtime resolver (`src/lib/api.js`) that probes a local backend quickly when running locally and falls back to `NEXT_PUBLIC_API_URL` when local is unavailable. You do not need to run the backend locally for the frontend to function.
 
 5. If you encounter CORS or cookie issues, confirm `CLIENT_URL` on Render contains the exact frontend origin and that the backend is configured to allow credentials (cookies) for that origin.
-
