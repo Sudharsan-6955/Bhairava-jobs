@@ -167,7 +167,7 @@ export default function Navbar() {
 					<Link href="/contact" className={`font-medium text-base hover:text-[#D4A037] transition-colors ${pathname === '/contact' ? 'text-[#D4A037] ' : 'text-[#232B3E]'}`}>Contact</Link>
 				</div>
 				<div className="hidden md:block">
-					<Link href="/contact">
+					<Link href="https://wa.me/916382946955?text=Hi%20Bhairava%20Jobs%2C%20I%20want%20to%20know%20more%20about%20job%20vacancies.">
 						<button className="bg-[#D4A037] text-white rounded-full px-6 py-2 font-medium text-base cursor-pointer shadow-md hover:bg-[#b88c2c] transition-colors">
 							Get In Touch
 						</button>
