@@ -198,8 +198,8 @@ export default function Navbar() {
 					<Link href="/about" className={`font-medium text-[15px] leading-6 hover:text-[#D4A037] transition-colors ${pathname === '/about' ? 'text-[#D4A037] underline underline-offset-4' : 'text-[#232B3E]'}`} onClick={() => setMenuOpen(false)}>About</Link>
 					<Link href="/testimonials" className={`font-medium text-[15px] leading-6 hover:text-[#D4A037] transition-colors ${pathname === '/testimonials' ? 'text-[#D4A037] underline underline-offset-4' : 'text-[#232B3E]'}`} onClick={() => setMenuOpen(false)}>Testimonials</Link>
 					<Link href="/contact" className={`font-medium text-[15px] leading-6 hover:text-[#D4A037] transition-colors ${pathname === '/contact' ? 'text-[#D4A037] underline underline-offset-4' : 'text-[#232B3E]'}`} onClick={() => setMenuOpen(false)}>Contact</Link>
-					<Link href="/contact">
-						<button className="bg-[#D4A037] text-white rounded-full px-6 py-2.5 font-semibold text-[15px] cursor-pointer shadow-md hover:bg-[#b88c2c] transition-colors w-full mt-2" onClick={() => setMenuOpen(false)}>
+					<Link href="https://wa.me/916382946955?text=Hi%20Bhairava%20Jobs%2C%20I%20want%20to%20know%20more%20about%20job%20vacancies.">
+						<button className="bg-[#D4A037] text-white rounded-full px-6 py-2 font-medium text-base cursor-pointer shadow-md hover:bg-[#b88c2c] transition-colors">
 							Get In Touch
 						</button>
 					</Link>
