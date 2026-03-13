@@ -21,11 +21,11 @@ export default function Journey() {
                         </h2>
                         
                         <p className="text-lg text-gray-600 leading-relaxed">
-                            Welcome to Bhairava Jobs, your gateway to employment opportunities in Tirupur!
+                            Welcome to Bhairava Jobs, your gateway to employment opportunities in Tenkasi!
                         </p>
                         
                         <p className="text-base text-gray-600 leading-relaxed">
-                            For over six years, we have been dedicated to connecting job seekers and employers in the vibrant garment industry of Tirupur. We have proudly been a reliable source for posting garment jobs and news, contributing to the growth and success of countless individuals and businesses.
+                            For over six years, we have been dedicated to connecting job seekers and employers in the vibrant garment industry of Tenkasi. We have proudly been a reliable source for posting garment jobs and news, contributing to the growth and success of countless individuals and businesses.
                         </p>
 
                         {/* Statistics */}

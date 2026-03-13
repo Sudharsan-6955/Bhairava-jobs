@@ -21,7 +21,7 @@ export default function HeroSection() {
 
                 {/* Subtitle */}
                 <p className="md:text-xl text-sm text-gray-700 max-w-3xl mx-auto leading-relaxed">
-                    Empowering Careers, Connecting Opportunities in Tirupur Since 2018
+                    Empowering Careers, Connecting Opportunities in Tenkasi Since 2026
                 </p>
 
                 {/* CTA Buttons */}

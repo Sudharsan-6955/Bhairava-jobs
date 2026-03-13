@@ -74,7 +74,7 @@ export default function AdminContactsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Contact Messages</h1>
+          <h1 className="text-3xl text-gray-700 font-bold">Contact Messages</h1>
           <p className="text-gray-600 mt-1">View and manage messages submitted via the contact page.</p>
         </div>
       </div>
@@ -84,21 +84,21 @@ export default function AdminContactsPage() {
 
       <div className="bg-white rounded-lg shadow p-6">
         {loading ? (
-          <div className="text-center py-8">Loading...</div>
+          <div className="text-center text-gray-300 py-8">Loading...</div>
         ) : contacts.length === 0 ? (
           <div className="text-center py-8">No messages found.</div>
         ) : (
           <div className="space-y-4">
             {contacts.map(c => (
-              <div key={c._id} className="border p-4 rounded-lg flex justify-between items-start">
-                <div>
-                  <div className="text-lg font-semibold">{c.fullName} <span className="text-sm text-gray-500">· {c.email}</span></div>
+              <div key={c._id} className="border p-4 rounded-lg flex flex-col md:flex-row md:justify-between items-start">
+                <div className="w-full md:flex-1">
+                  <div className="text-lg text-gray-500 font-semibold break-words">{c.fullName} <span className="text-sm text-gray-500">· {c.email}</span></div>
                   <div className="text-sm text-gray-600 mt-1">{c.contactNumber || ''} {c.qualification ? `· ${c.qualification}` : ''}</div>
                   <p className="mt-3 text-gray-800 whitespace-pre-wrap">{c.message}</p>
                   <div className="text-xs text-gray-500 mt-2">{new Date(c.createdAt).toLocaleString()}</div>
                 </div>
-                <div className="flex flex-col gap-2 ml-4">
-                  <button onClick={() => handleDelete(c._id)} className="px-3 py-1 bg-red-600 text-white rounded">Delete</button>
+                <div className="flex gap-2 mt-3 md:mt-0 md:ml-4">
+                  <button onClick={() => handleDelete(c._id)} className="px-3 py-1 bg-red-600 text-white rounded text-sm">Delete</button>
                 </div>
               </div>
             ))}

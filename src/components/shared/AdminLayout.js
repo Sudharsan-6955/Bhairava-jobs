@@ -128,8 +128,8 @@ export default function AdminLayout({ children }) {
   return (
     <div className="min-h-screen bg-gray-50">
       <AdminNavbar onLogout={handleLogout} />
-      <main className="p-4 md:p-8">
-        <div className="max-w-7xl mx-auto">
+      <main className="px-4 sm:px-6 lg:px-8 py-6 md:py-8">
+        <div className="max-w-5xl md:max-w-7xl mx-auto">
           {children}
         </div>
       </main>
