@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import categories from '@/lib/categories';
 
 export default function UploadForm({
   selectedJob = null,
@@ -314,14 +315,9 @@ export default function UploadForm({
                 className="w-full px-4 py-2 border border-gray-300 text-gray-700 placeholder-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
                 <option value="">Select Category</option>
-                <option value="Technology">Technology</option>
-                <option value="Design">Design</option>
-                <option value="Marketing">Marketing</option>
-                <option value="Sales">Sales</option>
-                <option value="HR">HR</option>
-                <option value="Finance">Finance</option>
-                <option value="Content">Content</option>
-                <option value="Other">Other</option>
+                {categories.map((c) => (
+                  <option key={c.id} value={c.title}>{c.title}</option>
+                ))}
               </select>
             </div>
 

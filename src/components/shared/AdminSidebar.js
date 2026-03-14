@@ -14,9 +14,11 @@ export default function AdminNavbar({ onLogout }) {
         <div className="flex items-center justify-between h-16 flex-wrap">
           {/* Left: Admin Dashboard Title & Navigation */}
           <div className="flex items-center gap-4">
-            <h1 className="text-lg sm:text-xl font-bold text-white whitespace-nowrap">
-              🏆 Admin Dashboard
-            </h1>
+            <Link href="/admin/jobs" className="flex items-center">
+              <h1 className="text-lg sm:text-xl font-bold text-white whitespace-nowrap cursor-pointer">
+                🏆 Admin Dashboard
+              </h1>
+            </Link>
 
             {/* Navigation Links */}
             <div className="hidden md:flex items-center gap-3">
@@ -33,8 +35,8 @@ export default function AdminNavbar({ onLogout }) {
                 ✉️ Contacts
               </Link>
               <Link
-                href="/admin/dashboard"
-                className={`px-3 py-1 rounded-lg font-medium transition-colors ${isActive('/admin/dashboard')}`}
+                href="/admin/jobs/new"
+                className={`px-3 py-1 rounded-lg font-medium transition-colors ${isActive('/admin/jobs/new')}`}
               >
                 📊 Upload Form
               </Link>
@@ -68,8 +70,8 @@ export default function AdminNavbar({ onLogout }) {
               ✉️ Contacts
             </Link>
           <Link
-            href="/admin/dashboard"
-            className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${isActive('/admin/dashboard')}`}
+            href="/admin/jobs/new"
+            className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${isActive('/admin/jobs/new')}`}
           >
             📊 Upload Form
           </Link>
