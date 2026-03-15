@@ -123,16 +123,18 @@ export default function Navbar() {
 
 	return (
 		<nav className="fixed top-0 left-0  z-50 bg-white shadow-md w-full">
-			<div className="flex items-center  justify-between mx-auto px-4 md:px-8 lg:px-20 py-3 max-w-7xl">
+			<div className="flex items-center  justify-between mx-auto px-4 md:px-8 lg:px-20 py-3 max-w-7xl relative">
 				<div className="flex items-center">
-					<Image
-						src="/images/logo.svg"
-						alt="Bhairava Jobs Logo"
-						width={100}
-						height={100}
-						style={{ width: 'auto', height: 'auto' }}
-						priority
-					/>
+					<Link href="/" aria-label="Home">
+						<Image
+							src="/images/logo.svg"
+							alt="Bhairava Jobs Logo"
+							width={56}
+							height={56}
+							className="h-12 md:h-14 w-auto"
+							priority
+						/>
+					</Link>
 				</div>
 				{/* Desktop Menu */}
 				<div className="hidden md:flex gap-8 items-center">
@@ -173,23 +175,46 @@ export default function Navbar() {
 						</button>
 					</Link>
 				</div>
-				{/* Hamburger Icon */}
-				<button
-					className="md:hidden flex items-center justify-center p-2 rounded-lg border border-slate-200 bg-white shadow-sm"
-					onClick={() => setMenuOpen(!menuOpen)}
-					aria-label="Toggle menu"
-				>
-					{menuOpen ? (
-						<svg className="w-6 h-6 text-[#232B3E]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-							<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+				<div className="flex items-center md:hidden">
+					<button
+						aria-label="Language"
+						onClick={() => setLangOpen(!langOpen)}
+						className="flex items-center justify-center p-2 rounded-lg hover:bg-slate-100"
+					>
+						<svg className="w-5 h-5 text-[#232B3E]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+							<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 2a10 10 0 100 20 10 10 0 000-20zM2 12h20M12 2c2.21 2.21 3.5 5.22 3.5 8s-1.29 5.79-3.5 8M12 22c-2.21-2.21-3.5-5.22-3.5-8s1.29-5.79 3.5-8" />
 						</svg>
-					) : (
-						<svg className="w-6 h-6 text-[#232B3E]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-							<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-						</svg>
-					)}
-				</button>
+					</button>
+					<button
+						className="flex items-center justify-center p-2 rounded-lg border border-slate-200 bg-white shadow-sm ml-2"
+						onClick={() => setMenuOpen(!menuOpen)}
+						aria-label="Toggle menu"
+					>
+						{menuOpen ? (
+							<svg className="w-6 h-6 text-[#232B3E]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+							</svg>
+						) : (
+							<svg className="w-6 h-6 text-[#232B3E]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+							</svg>
+						)}
+					</button>
+				</div>
+				{/* Hidden Google element (script needs it) - always present */}
+				<div id="google_translate_element" className="hidden" />
 			</div>
+
+			{/* Mobile language dropdown */}
+			{langOpen && (
+				<div className="md:hidden absolute right-4 top-16 w-44 bg-white border rounded shadow-sm z-50">
+					{supportedLangs.map((l) => (
+						<button key={l.code} onClick={() => setLanguage(l.code)} className="w-full text-left px-3 py-2 hover:bg-slate-100 text-gray-700">
+							{l.label}
+						</button>
+						))}
+				</div>
+			)}
 			{/* Mobile Menu */}
 			{menuOpen && (
 		<div className="md:hidden mx-4 mb-3 rounded-2xl border border-white/30 bg-white/60 backdrop-blur-lg shadow-2xl px-5 py-5 flex flex-col gap-4">
