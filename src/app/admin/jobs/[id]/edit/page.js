@@ -12,6 +12,7 @@ export default function EditJobPage() {
   const [selectedJob, setSelectedJob] = useState(null);
   const [loading, setLoading] = useState(true);
   const [apiBaseUrl, setApiBaseUrl] = useState(null);
+  const [apiResolved, setApiResolved] = useState(false);
 
   useEffect(() => {
     let mounted = true;
@@ -27,13 +28,15 @@ export default function EditJobPage() {
         } catch (_) {
           if (mounted) setApiBaseUrl(process.env.NEXT_PUBLIC_API_URL || 'https://bhairava-jobs-backend.onrender.com/api');
         }
+      } finally {
+        if (mounted) setApiResolved(true);
       }
     })();
     return () => { mounted = false; };
   }, []);
 
   useEffect(() => {
-    if (!id) return;
+    if (!id || !apiResolved) return;
 
     let mounted = true;
     (async () => {
@@ -50,7 +53,14 @@ export default function EditJobPage() {
         });
 
         if (!res.ok) {
-          throw new Error('Failed to load job');
+          let message = 'Failed to load job';
+          try {
+            const errData = await res.json();
+            message = errData?.message || message;
+          } catch (_) {
+            // Keep default message when body is not JSON.
+          }
+          throw new Error(message);
         }
 
         const data = await res.json();
@@ -63,7 +73,7 @@ export default function EditJobPage() {
     })();
 
     return () => { mounted = false; };
-  }, [id, apiBaseUrl]);
+  }, [id, apiBaseUrl, apiResolved]);
 
   const handleUpdated = () => {
     router.push('/admin/jobs');
