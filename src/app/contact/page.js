@@ -33,7 +33,7 @@ export default function ContactPage() {
 
                         {/* Connect Button */}
                         <a
-                            href="https://wa.me/8300015660?text=Hi%20Bhairava%20Jobs%2C%20I%20want%20to%20know%20more%20about%20job%20vacancies."
+                            href="https://wa.me/918300015660?text=Hi%20Bhairava%20Jobs%2C%20I%20want%20to%20know%20more%20about%20job%20vacancies."
                             target="_blank"
                             rel="noopener noreferrer"
                             className="flex items-center gap-2 w-fit mx-auto bg-white border border-gray-300 rounded-full px-4 py-2 md:px-8 md:py-3 font-medium text-sm md:text-base text-gray-700 shadow hover:bg-gray-100 transition-colors mb-12"
